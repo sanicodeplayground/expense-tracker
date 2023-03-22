@@ -1,23 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [expenses, setExpenses] = useState([]);
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!description || !amount) return;
+
+    const newExpense = {
+      id: Date.now(),
+      description,
+      amount: parseFloat(amount),
+    };
+
+    setExpenses([...expenses, newExpense]);
+    setDescription("");
+    setAmount("");
+  };
+
+  const handleDelete = (id) => {
+    setExpenses(expenses.filter((expense) => expense.id !== id));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Expense Tracker</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <button type="submit">Add Expense</button>
+      </form>
+
+      <ul>
+        {expenses.map((expense) => (
+          <li key={expense.id}>
+            {expense.description} - £{expense.amount.toFixed(2)}
+            <button onClick={() => handleDelete(expense.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
